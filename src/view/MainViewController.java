@@ -3,6 +3,7 @@ package view;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 
 import application.Main;
 import javafx.fxml.FXML;
@@ -34,12 +35,15 @@ public class MainViewController implements Initializable{
 	
 	@FXML
 	public void onItemDepartmentAction() {
-		loadView2("/view/DepartmentList.fxml");
+		loadView("/view/DepartmentList.fxml", (DepartmentListController controller) -> { 
+			controller.setDepartmentService(new DepartmentService());
+			controller.updateTableView();
+		});
 	}
 
 	@FXML
 	public void onItemAboutAction() {
-		loadView("/view/About.fxml");
+		loadView("/view/About.fxml", x -> {});
 	}
 	
 	
@@ -49,25 +53,7 @@ public class MainViewController implements Initializable{
 		
 	}
 	
-	private void loadView(String absoluteName) {
-		FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
-		try {
-			VBox vbox = loader.load();
-			
-			Scene mainScene = Main.getMainScene();
-			VBox mainVBox = (VBox) ((ScrollPane) mainScene.getRoot()).getContent();
-			
-			Node mainMenu = mainVBox.getChildren().get(0);
-			
-			mainVBox.getChildren().clear();
-			mainVBox.getChildren().add(mainMenu);
-			mainVBox.getChildren().addAll(vbox.getChildren());
-		} catch (IOException e) {
-			Alerts.showAlert("Erro!", null, e.getMessage(), AlertType.ERROR);
-		}
-	}
-	
-	private void loadView2(String absoluteName) {
+	private <T> void loadView(String absoluteName, Consumer<T> con) {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
 		try {
 			VBox vbox = loader.load();
@@ -81,9 +67,8 @@ public class MainViewController implements Initializable{
 			mainVBox.getChildren().add(mainMenu);
 			mainVBox.getChildren().addAll(vbox.getChildren());
 			
-			DepartmentListController controller = loader.getController();
-			controller.setDepartmentService(new DepartmentService());
-			controller.updateTableView();
+			T controller = loader.getController();
+			con.accept(controller);
 		} catch (IOException e) {
 			Alerts.showAlert("Erro!", null, e.getMessage(), AlertType.ERROR);
 		}
