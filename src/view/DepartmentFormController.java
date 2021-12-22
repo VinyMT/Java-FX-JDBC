@@ -1,6 +1,8 @@
 package view;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import db.DbException;
@@ -13,6 +15,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import model.entities.Department;
 import model.services.DepartmentService;
+import view.listeners.DataChangeListener;
 import view.util.Alerts;
 import view.util.Constraints;
 import view.util.Utils;
@@ -21,6 +24,7 @@ public class DepartmentFormController implements Initializable {
 	
 	private DepartmentService service;
 	private Department dep;
+	private List<DataChangeListener> listeners = new ArrayList<>();
 	
     @FXML
 	private TextField tfName;
@@ -49,12 +53,19 @@ public class DepartmentFormController implements Initializable {
        		dep = getFormData();
        		service.saveOrUpdate(dep);
        		Utils.currentStage(ev).close();
+       		notifyDataChangeListeners();
        	} catch(DbException e) {
        		Alerts.showAlert("Error!", null, e.getMessage(), AlertType.ERROR);
        	}
     }
     
-    private Department getFormData() {
+    private void notifyDataChangeListeners() {
+    	for(DataChangeListener l: listeners) {
+    		l.onDataChanged();
+    	}
+	}
+
+	private Department getFormData() {
     	Department department = new Department();
     	
     	department.setId(Utils.tryParseToInt(tfId.getText()));
@@ -93,5 +104,9 @@ public class DepartmentFormController implements Initializable {
 		}
 		tfId.setText(String.valueOf(dep.getId()));
 		tfName.setText(dep.getName());
+	}
+	
+	public void addListeners(DataChangeListener listener) {
+		listeners.add(listener);
 	}
 }
