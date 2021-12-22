@@ -23,10 +23,11 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.entities.Department;
 import model.services.DepartmentService;
+import view.listeners.DataChangeListener;
 import view.util.Alerts;
 import view.util.Utils;
 
-public class DepartmentListController implements Initializable {
+public class DepartmentListController implements Initializable, DataChangeListener {
 	
 	private DepartmentService service;
 	
@@ -90,6 +91,7 @@ public class DepartmentListController implements Initializable {
 			controller.setDepartmentService(new DepartmentService());
 			controller.setDepartment(dep);
 			controller.updateFormData();
+			controller.addListeners(this);
 			
 			dialogStage.setTitle("Type department data");
 			dialogStage.setScene(new Scene(pane));
@@ -100,5 +102,10 @@ public class DepartmentListController implements Initializable {
 		} catch(IOException e) {
 			Alerts.showAlert("Error!", null, e.getMessage(), AlertType.ERROR);
 		}
+	}
+
+	@Override
+	public void onDataChanged() {
+		updateTableView();
 	}
 }
