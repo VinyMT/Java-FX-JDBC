@@ -3,7 +3,9 @@ package view;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import db.DbException;
 import javafx.event.ActionEvent;
@@ -14,6 +16,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import model.entities.Department;
+import model.exceptions.ValidationException;
 import model.services.DepartmentService;
 import view.listeners.DataChangeListener;
 import view.util.Alerts;
@@ -56,6 +59,8 @@ public class DepartmentFormController implements Initializable {
        		notifyDataChangeListeners();
        	} catch(DbException e) {
        		Alerts.showAlert("Error!", null, e.getMessage(), AlertType.ERROR);
+       	} catch(ValidationException e) {
+       		setErrorMessages(e.getErrors());
        	}
     }
     
@@ -67,13 +72,31 @@ public class DepartmentFormController implements Initializable {
 
 	private Department getFormData() {
     	Department department = new Department();
+    	ValidationException exception = new ValidationException("Validation Error");
     	
     	department.setId(Utils.tryParseToInt(tfId.getText()));
+    	
+    	if(tfName.getText() == null || tfName.getText().trim().equals("")) {
+    		exception.addErrors("Name", "Field can't be empty");
+    	}
+    	
     	department.setName(tfName.getText());
+    	
+    	if(exception.getErrors().size() > 0) {
+    		throw exception;
+    	}
     	
     	return department;
 	}
 
+	private void setErrorMessages(Map<String, String> errors) {
+		Set<String> fields = errors.keySet();
+		
+		if(fields.contains("Name")) {
+			lblError.setText(errors.get("Name"));
+		}
+	}
+	
 	@FXML
     public void onBtnCancelAction() {
     	System.out.println("onBtnCancelAction");
