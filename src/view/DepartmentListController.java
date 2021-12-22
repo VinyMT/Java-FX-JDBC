@@ -47,8 +47,7 @@ public class DepartmentListController implements Initializable {
 	@FXML
 	public void onBtnNewAction(ActionEvent ev) {
 		Department dep = new Department();
-		this.createDialogForm(Utils.currentStage(ev), "/view/DepartmentForm.fxml", dep);
-		
+		this.createDialogForm(Utils.currentStage(ev), "/view/DepartmentForm.fxml", dep);	
 	}
 	
 	@Override
@@ -86,17 +85,18 @@ public class DepartmentListController implements Initializable {
 			Pane pane = loader.load();
 			Stage dialogStage = new Stage();
 			
+			DepartmentFormController controller = loader.getController();
+			
+			controller.setDepartmentService(new DepartmentService());
+			controller.setDepartment(dep);
+			controller.updateFormData();
+			
 			dialogStage.setTitle("Type department data");
 			dialogStage.setScene(new Scene(pane));
 			dialogStage.setResizable(false);
 			dialogStage.initOwner(currentStage);
 			dialogStage.initModality(Modality.WINDOW_MODAL);
 			dialogStage.showAndWait();
-			
-			DepartmentFormController controller = loader.getController();
-			
-			controller.setDepartment(dep);
-			controller.updateFormData();
 		} catch(IOException e) {
 			Alerts.showAlert("Error!", null, e.getMessage(), AlertType.ERROR);
 		}
