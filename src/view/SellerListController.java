@@ -110,7 +110,6 @@ public class SellerListController implements Initializable, DataChangeListener {
 	}
 	
 	private void createDialogForm(Stage currentStage, String absoluteName, Seller dep) {
-		/*
 		FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
 		try {
 			Pane pane = loader.load();
@@ -123,7 +122,7 @@ public class SellerListController implements Initializable, DataChangeListener {
 			controller.updateFormData();
 			controller.addListeners(this);
 
-			dialogStage.setTitle("Type department data");
+			dialogStage.setTitle("Type seller data");
 			dialogStage.setScene(new Scene(pane));
 			dialogStage.setResizable(false);
 			dialogStage.initOwner(currentStage);
@@ -131,7 +130,7 @@ public class SellerListController implements Initializable, DataChangeListener {
 			dialogStage.showAndWait();
 		} catch (IOException e) {
 			Alerts.showAlert("Error!", null, e.getMessage(), AlertType.ERROR);
-		}*/
+		}
 	}
 
 	private void initEditButtons() {
