@@ -1,9 +1,11 @@
 package view;
 
 import java.net.URL;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -107,30 +109,52 @@ public class SellerFormController implements Initializable {
 	}
 
 	private Seller getFormData() {
-		Seller department = new Seller();
+		Seller seller = new Seller();
 		ValidationException exception = new ValidationException("Validation Error");
 
-		department.setId(Utils.tryParseToInt(tfId.getText()));
+		seller.setId(Utils.tryParseToInt(tfId.getText()));
 
 		if (tfName.getText() == null || tfName.getText().trim().equals("")) {
 			exception.addErrors("Name", "Field can't be empty");
 		}
+		
+		seller.setName(tfName.getText());
+		
+		if (tfEmail.getText() == null || tfEmail.getText().trim().equals("")) {
+			exception.addErrors("Email", "Field can't be empty");
+		}
+		
+		seller.setEmail(tfEmail.getText());
+		
+		if (dpBirthDate.getValue() == null) {
+			exception.addErrors("birthDate", "Field can't be empty");
+		} else {
+			Instant instant = Instant.from(dpBirthDate.getValue().atStartOfDay(ZoneId.systemDefault()));
+			seller.setBirthDate(Date.from(instant));
+		}
 
-		department.setName(tfName.getText());
-
+		if (tfBaseSalary.getText() == null || tfBaseSalary.getText().trim().equals("")) {
+			exception.addErrors("baseSalary", "Field can't be empty");
+		}
+		
+		seller.setBaseSalary(Utils.tryParseToDouble(tfBaseSalary.getText()));
+		
+		seller.setDepartment(comboBoxDepartment.getValue());
+		
 		if (exception.getErrors().size() > 0) {
 			throw exception;
 		}
 
-		return department;
+		return seller;
 	}
 
 	private void setErrorMessages(Map<String, String> errors) {
 		Set<String> fields = errors.keySet();
-
-		if (fields.contains("Name")) {
-			lblErrorName.setText(errors.get("Name"));
-		}
+		
+		lblErrorName.setText(fields.contains("Name") ? errors.get("Name") : "");
+		lblErrorEmail.setText(fields.contains("Email") ? errors.get("Email") : "");
+		lblErrorBirthDate.setText(fields.contains("birthDate") ? errors.get("birthDate") : "");
+		lblErrorBaseSalary.setText(fields.contains("baseSalary") ? errors.get("baseSalary") : "");
 	}
 
 	@FXML
