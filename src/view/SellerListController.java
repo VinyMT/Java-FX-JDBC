@@ -68,8 +68,8 @@ public class SellerListController implements Initializable, DataChangeListener {
 
 	@FXML
 	public void onBtnNewAction(ActionEvent ev) {
-		Seller dep = new Seller();
-		this.createDialogForm(Utils.currentStage(ev), "/view/SellerForm.fxml", dep);
+		Seller sel = new Seller();
+		this.createDialogForm(Utils.currentStage(ev), "/view/SellerForm.fxml", sel);
 	}
 
 	@Override
@@ -109,7 +109,7 @@ public class SellerListController implements Initializable, DataChangeListener {
 		initRemoveButtons();
 	}
 	
-	private void createDialogForm(Stage currentStage, String absoluteName, Seller dep) {
+	private void createDialogForm(Stage currentStage, String absoluteName, Seller sel) {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
 		try {
 			Pane pane = loader.load();
@@ -118,7 +118,7 @@ public class SellerListController implements Initializable, DataChangeListener {
 			SellerFormController controller = loader.getController();
 
 			controller.setSellerService(new SellerService());
-			controller.setSeller(dep);
+			controller.setSeller(sel);
 			controller.updateFormData();
 			controller.addListeners(this);
 
